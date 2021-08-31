@@ -7,12 +7,10 @@ cimport cython
 from libcpp.algorithm cimport sort as csort
 from libcpp.vector cimport vector
 from libcpp.pair cimport pair
-#from sage.sets.disjoint_set cimport DisjointSet_of_integers
 from sage.sets.disjoint_set import DisjointSet
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from sage.graphs.generic_graph_pyx cimport GenericGraph_pyx
 from cysignals.memory cimport sig_calloc, sig_free
-#from sage.data_structures.bitset_base cimport *
 
 
 from itertools import combinations
@@ -100,12 +98,7 @@ cdef class UnionFind() :
         
         return list(temp.values())
 
-"""cdef UnionFind UF 
-UF = UnionFind([1,2,4,5])
-UF.union(1,2)
-UF.union(4,5)
-print(UF.sets())
-"""
+
 
 def layout_to_decomp(g,L) : #sage graph g, L permutation of vertices. Returns the bags induced by the layout L
     bags = []
@@ -246,7 +239,7 @@ def longest_isometric_cycle(G):  #longest isometric cycle detection by Lohkstano
                     if (dist[x][u] == 1 and (v, x) in Vk) and Gk_pow_k[((u, v), (v, x))]:
                         ans = k
     return ans
-###
+
 
 
 
@@ -280,7 +273,7 @@ def two_approximation(g) : #returns a 2-approximation of the pathlength of g
             best_bags = Lplus
 
     while best_bags[len(best_bags)-1] == [] :
-        best_bags.pop() #construction bourrine, nettoyage bourrin
+        best_bags.pop() 
     return best_bags, diam
            
 #lower bound by detection of isometric spider graph
@@ -365,13 +358,6 @@ cdef vector[pair[int,int]] vflatten( vector[vector[pair[int,int]]] L ) : #vector
         for j in range(L[i].size()) :
             L2.push_back(L[i][j])
     return L2 
-
-
-"""cdef vector[vector[pair[int,int]]] test  =  [[ (1,1), (2,2) ] , [(3,3), (4,4)]]
-cdef vector[pair[int,int]] test2 
-test2 = vflatten(test)
-print(test2)
-"""
 
 
         
@@ -517,7 +503,7 @@ cdef vector[int] gBAB2(
 
 
 
-    cdef bint connected_pl = True 
+    cdef bint connected_pl = True #Change to false to remove connected heuristic
 
     for v in V_S :
         d=0
@@ -582,7 +568,6 @@ cdef vector[int] gBAB2(
         #cc.sort(key = len, reverse = True) #How useful is sorting ?    
     
     
-    #cc = connectedComponentsUF(n, neighbors, V_S)
     cdef vector[int] P_prime   
 
     cdef set ens 
@@ -593,7 +578,7 @@ cdef vector[int] gBAB2(
     for i in range(len(cc)) : #note pour le futur : on ne peut pas se passer du nonecheck produit par cython, mais étant "unlikely_", il n'est en pratique jamais considéré : donc pas d'overhead.  
         c = cc[i]
         ens = set_F.union(c)
-        #ens = S.union(c)
+
         d=0
 
         for u,w in combinations(ens, 2) :
@@ -614,7 +599,7 @@ cdef vector[int] gBAB2(
             return gBAB2(neighbors, distances, n, P, S, V_S, P_star, UB, LB, D, coupes, count, prefix_storage, max_prefix_length, max_prefix_number, cc, True, jumps, t0)#, b_prefix)
     
 
-    #temp
+    #Copies to be used as arguments
     cdef set S2 
     cdef set V_S2
 
@@ -693,15 +678,6 @@ cdef list pathlength_gBAB2(GenericGraph_pyx  g,
     ecc = eccentricity(g)
     
     c_distances = c_distances_all_pairs(g)
-
-    #bitsets for elements of the prefix 
-    
-    #cdef bitset_s * b_prefix
-    #bitset_init(b_prefix, n)
-
-    
-    
-
     cdef unsigned short ** distances 
     distances = <unsigned short **>sig_calloc(n, sizeof(unsigned short *))
     
@@ -730,7 +706,7 @@ cdef list pathlength_gBAB2(GenericGraph_pyx  g,
     branches = 0
 
     
-    experimental = False 
+    experimental = False #Change to true to break after exploring diameters
 
     cdef int jumps
 
@@ -779,7 +755,7 @@ cpdef run(g, V = None) :
     ##the main function for practical use. Takes a graph and an optional 'permutation' argument.
     ##If no permutation is given, the vertices will be shuffled before the graph is processed.
 
-    ##You can pass g.vertices() if you wish not to shuffle the graph.
+    ##You can pass V = g.vertices() if you wish not to shuffle the graph.
 
 
 
