@@ -2,7 +2,7 @@
 
 A first approach to pathlength computation.
 
-See the resultats.pdf for an explanation of the reasonning behing the algorithm, aswell as some experimental results.
+See the resultats.pdf for an explanation of the reasonning behing the algorithm, aswell as some experimental results, or the ovearleaf link here : https://fr.overleaf.com/read/ydhpwwjrqvys (in french for now)
 
 Compile with $cythonize -a -i pathlength.pyx
 
